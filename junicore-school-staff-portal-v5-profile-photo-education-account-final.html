@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JuniCore · School Staff Portal V1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={darkMode:'class'}
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-100">
+<div class="min-h-screen lg:flex">
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full border-r border-slate-200 bg-white transition-transform lg:static lg:translate-x-0 dark:border-zinc-800 dark:bg-zinc-900">
+    <div class="flex h-20 items-center gap-3 border-b border-slate-100 px-5 dark:border-zinc-800">
+      <div class="grid h-11 w-11 place-items-center rounded-2xl bg-indigo-600 text-white"><i class="fa-solid fa-school"></i></div>
+      <div><div class="font-black">JuniCore</div><div class="text-xs font-bold text-indigo-600">School Staff Portal</div></div>
+      <button onclick="toggleSidebar()" class="ml-auto lg:hidden"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="border-b border-slate-100 p-4 dark:border-zinc-800">
+      <div class="rounded-2xl bg-slate-50 p-3 dark:bg-zinc-950">
+        <div class="flex items-center gap-3">
+          <div class="grid h-11 w-11 place-items-center rounded-full bg-indigo-100 font-black text-indigo-700">IS</div>
+          <div class="min-w-0"><p id="sideName" class="truncate text-sm font-black">Mr. Imran Shah</p><p id="sideRole" class="truncate text-[10px] font-bold text-slate-400">Office Staff · Administration</p></div>
+        </div>
+      </div>
+    </div>
+    <nav class="h-[calc(100vh-164px)] overflow-y-auto p-3">
+      <button data-page="dashboard" onclick="openPage('dashboard')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-house w-7"></i>Dashboard</button>
+      <button data-page="profile" onclick="openPage('profile')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-id-card w-7"></i>My Profile</button>
+      <button data-page="attendance" onclick="openPage('attendance')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-calendar-check w-7"></i>My Attendance</button>
+      <button data-page="leave" onclick="openPage('leave')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-envelope-open-text w-7"></i>Leave Requests</button>
+      <button data-page="salary" onclick="openPage('salary')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-money-check-dollar w-7"></i>My Salary / Payroll</button>
+      <button data-page="requests" onclick="openPage('requests')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-inbox w-7"></i>My Requests <span id="requestBadge" class="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-[9px] text-amber-700">0</span></button>
+      <button data-page="messages" onclick="openPage('messages')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-comments w-7"></i>Messages</button>
+      <button data-page="documents" onclick="openPage('documents')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-folder-open w-7"></i>Documents</button>
+      <button data-page="notifications" onclick="openPage('notifications')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-bell w-7"></i>Notifications <span id="notificationBadge" class="ml-1 rounded-full bg-rose-100 px-2 py-0.5 text-[9px] text-rose-700">0</span></button>
+      <button data-page="settings" onclick="openPage('settings')" class="nav w-full rounded-xl px-3 py-3 text-left text-sm font-bold"><i class="fa-solid fa-gear w-7"></i>Settings</button>
+    </nav>
+  </aside>
+
+  <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden"></div>
+
+  <main class="min-w-0 flex-1">
+    <header class="sticky top-0 z-30 flex h-20 items-center border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:px-7 dark:border-zinc-800 dark:bg-zinc-950/90">
+      <button onclick="toggleSidebar()" class="mr-3 grid h-10 w-10 place-items-center rounded-xl border border-slate-200 lg:hidden dark:border-zinc-800"><i class="fa-solid fa-bars"></i></button>
+      <div><p class="text-[10px] font-black uppercase tracking-[.16em] text-teal-600">Main Campus · Session 2026–2027</p><h1 id="pageTitle" class="text-xl font-black">Dashboard</h1></div>
+      <div class="ml-auto flex items-center gap-2">
+        <button onclick="openPage('notifications')" class="relative grid h-10 w-10 place-items-center rounded-xl border border-slate-200 dark:border-zinc-800"><i class="fa-solid fa-bell"></i><span id="topNotificationDot" class="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500"></span></button>
+        <button onclick="toggleTheme()" class="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 dark:border-zinc-800"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+      </div>
+    </header>
+
+    <div class="p-3 sm:p-4 md:p-7">
+      <section id="page-dashboard" class="page space-y-5 md:space-y-6">
+        <div class="grid gap-4 lg:grid-cols-[1.45fr_.75fr]">
+          <div class="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-indigo-950 via-indigo-800 to-violet-700 p-5 text-white shadow-xl md:p-7">
+            <div class="absolute -right-12 -top-14 h-40 w-40 rounded-full bg-white/10"></div><div class="absolute -bottom-20 left-1/2 h-44 w-44 rounded-full bg-fuchsia-400/10"></div>
+            <div class="relative"><div class="flex items-center gap-3"><div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/15 text-lg font-black ring-1 ring-white/20">IS</div><div class="min-w-0"><p class="text-[10px] font-black uppercase tracking-[.16em] text-indigo-200">My Staff Workspace</p><h2 class="mt-0.5 truncate text-2xl font-black md:text-3xl">Hi, <span id="welcomeName">Imran Shah</span></h2></div></div>
+            <p class="mt-4 max-w-xl text-sm leading-6 text-indigo-100">Your workday, attendance, salary and requests — all in one simple workspace.</p>
+            <div class="mt-5 flex flex-wrap gap-2"><span class="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-bold ring-1 ring-white/10">Non-Teaching Staff</span><span id="dashDept" class="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-bold ring-1 ring-white/10">Administration</span><span id="dashStatus" class="rounded-full bg-emerald-400/20 px-3 py-1.5 text-[10px] font-black text-emerald-100">Active</span></div></div>
+          </div>
+          <div class="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div class="flex items-start justify-between"><div><p class="text-[10px] font-black uppercase tracking-[.15em] text-indigo-500">Today</p><h3 id="dashTodayDate" class="mt-1 text-lg font-black">—</h3></div><div class="grid h-11 w-11 place-items-center rounded-2xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300"><i class="fa-regular fa-calendar"></i></div></div>
+            <div class="mt-5 flex items-end justify-between rounded-2xl bg-slate-50 p-4 dark:bg-zinc-950"><div><p class="text-[10px] font-bold text-slate-400">Attendance</p><p id="dashTodayStatus" class="mt-1 text-xl font-black">—</p></div><div class="text-right"><p class="text-[10px] text-slate-400">Check in</p><p id="dashTodayCheckin" class="mt-1 text-lg font-black">—</p></div></div>
+          </div>
+        </div>
+
+        <div><p class="text-[10px] font-black uppercase tracking-[.14em] text-slate-400">Quick access</p><h3 class="mb-3 text-lg font-black">What do you need?</h3>
+          <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <button onclick="openPage('attendance')" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300"><i class="fa-solid fa-calendar-check"></i></div><p class="mt-3 text-sm font-black">Attendance</p><p class="mt-1 hidden text-[10px] text-slate-400 sm:block">View history</p></button>
+            <button onclick="openPage('salary')" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-300"><i class="fa-solid fa-wallet"></i></div><p class="mt-3 text-sm font-black">Salary</p><p class="mt-1 hidden text-[10px] text-slate-400 sm:block">Payslips & history</p></button>
+            <button onclick="openLeaveModal()" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-300"><i class="fa-solid fa-person-walking-arrow-right"></i></div><p class="mt-3 text-sm font-black">Apply Leave</p><p class="mt-1 hidden text-[10px] text-slate-400 sm:block">Send to admin</p></button>
+            <button onclick="openPage('messages')" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/30 dark:text-sky-300"><i class="fa-solid fa-comment-dots"></i></div><p class="mt-3 text-sm font-black">Messages</p><p class="mt-1 hidden text-[10px] text-slate-400 sm:block">Contact admin</p></button>
+          </div>
+        </div>
+
+        <div id="summaryCards" class="grid grid-cols-2 gap-3 xl:grid-cols-4"></div>
+        <div class="grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
+          <div class="rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm md:p-5 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-indigo-500">Workday</p><h3 class="mt-1 text-lg font-black">Recent Attendance</h3></div><button onclick="openPage('attendance')" class="rounded-xl bg-indigo-50 px-3 py-2 text-[10px] font-black text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300">See all</button></div><div id="dashAttendance" class="mt-4 space-y-2"></div></div>
+          <div class="rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm md:p-5 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Payroll</p><h3 class="mt-1 text-lg font-black">Latest Salary</h3></div><button onclick="openPage('salary')" class="text-[10px] font-black text-emerald-600">History</button></div><div id="dashPayroll" class="mt-4"></div></div>
+        </div>
+        <div class="grid gap-4 xl:grid-cols-2">
+          <div class="rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm md:p-5 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-violet-500">Requests</p><h3 class="mt-1 text-lg font-black">My Recent Requests</h3></div><button onclick="openPage('requests')" class="text-[10px] font-black text-violet-600">See all</button></div><div id="dashRequests" class="mt-4 space-y-2"></div></div>
+          <div class="rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm md:p-5 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-rose-500">Updates</p><h3 class="mt-1 text-lg font-black">Notifications</h3></div><button onclick="openPage('notifications')" class="text-[10px] font-black text-rose-600">See all</button></div><div id="dashNotifications" class="mt-4 space-y-2"></div></div>
+        </div>
+      </section>
+
+      <section id="page-profile" class="page hidden space-y-5 md:space-y-6">
+        <div class="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-indigo-950 via-indigo-800 to-violet-700 p-5 text-white shadow-xl md:p-7">
+          <div class="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-white/10"></div>
+          <div class="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div class="flex min-w-0 items-center gap-4">
+              <div class="relative shrink-0"><img id="profilePhoto" alt="Staff profile" class="h-20 w-20 rounded-3xl border-2 border-white/30 bg-white/10 object-cover shadow-lg" src=""><button onclick="document.getElementById('profilePhotoInput').click()" class="absolute -bottom-2 -right-2 grid h-9 w-9 place-items-center rounded-xl bg-white text-indigo-700 shadow-lg" title="Update profile photo"><i class="fa-solid fa-camera text-xs"></i></button><input id="profilePhotoInput" type="file" accept="image/*" class="hidden" onchange="updateProfilePhoto(event)"></div>
+              <div class="min-w-0"><p class="text-[10px] font-black uppercase tracking-[.16em] text-indigo-200">Official Staff Profile</p><h2 id="profileHeroName" class="mt-1 truncate text-2xl font-black md:text-3xl">Mr. Imran Shah</h2><p id="profileHeroRole" class="mt-1 text-xs text-indigo-100">Office Staff · Administration</p><button onclick="document.getElementById('profilePhotoInput').click()" class="mt-3 rounded-lg bg-white/10 px-3 py-2 text-[10px] font-black ring-1 ring-white/15"><i class="fa-solid fa-image mr-1"></i>Update Photo</button></div>
+            </div>
+            <div class="flex flex-wrap gap-2"><span id="profileHeroId" class="rounded-full bg-white/10 px-3 py-2 text-[10px] font-black ring-1 ring-white/10">STF-001</span><span id="profileHeroStatus" class="rounded-full bg-emerald-400/20 px-3 py-2 text-[10px] font-black text-emerald-100">Active</span></div>
+          </div>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-[1.15fr_.85fr]">
+          <div class="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-indigo-500">Personal Information</p><h3 class="mt-1 text-lg font-black">Basic Details</h3></div><i class="fa-regular fa-id-card text-xl text-indigo-500"></i></div><div id="profilePersonalGrid" class="mt-5 grid gap-3 sm:grid-cols-2"></div></div>
+          <div class="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><p class="text-[10px] font-black uppercase tracking-wider text-violet-500">Employment</p><h3 class="mt-1 text-lg font-black">Work Information</h3><div id="profileWorkGrid" class="mt-5 space-y-3"></div></div>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-2">
+          <div class="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-sky-500">Education</p><h3 class="mt-1 text-lg font-black">Education & Qualification</h3></div><i class="fa-solid fa-graduation-cap text-xl text-sky-500"></i></div>
+            <div id="profileEducationGrid" class="mt-5 space-y-3"></div>
+            <button onclick="openProfileUpdateModal('Education / Qualification Update')" class="mt-4 w-full rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs font-black text-sky-700 dark:border-sky-950 dark:bg-sky-950/20 dark:text-sky-300"><i class="fa-solid fa-pen mr-2"></i>Request Education Update</button>
+          </div>
+          <div class="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-emerald-500">Account</p><h3 class="mt-1 text-lg font-black">Portal Account Details</h3></div><i class="fa-solid fa-user-shield text-xl text-emerald-500"></i></div>
+            <div id="profileAccountGrid" class="mt-5 space-y-3"></div>
+            <button onclick="openProfileUpdateModal('Account Information Update')" class="mt-4 w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-black text-emerald-700 dark:border-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-300"><i class="fa-solid fa-user-pen mr-2"></i>Request Account Update</button>
+          </div>
+        </div>
+
+        <div class="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-amber-500">Profile Updates</p><h3 class="mt-1 text-lg font-black">Need to change your information?</h3><p class="mt-1 text-xs text-slate-400">Select the area and send the update to School Admin for approval.</p></div><button onclick="openProfileUpdateModal('Profile Information Update')" class="rounded-xl bg-indigo-600 px-4 py-3 text-xs font-black text-white"><i class="fa-solid fa-pen-to-square mr-2"></i>Request Update</button></div>
+          <div class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <button onclick="openProfileUpdateModal('Personal Information Update')" class="rounded-xl bg-slate-50 p-3 text-left dark:bg-zinc-950"><i class="fa-solid fa-user text-indigo-500"></i><p class="mt-2 text-xs font-black">Personal</p></button>
+            <button onclick="openProfileUpdateModal('Contact Information Update')" class="rounded-xl bg-slate-50 p-3 text-left dark:bg-zinc-950"><i class="fa-solid fa-address-book text-sky-500"></i><p class="mt-2 text-xs font-black">Contact</p></button>
+            <button onclick="openProfileUpdateModal('Education / Qualification Update')" class="rounded-xl bg-slate-50 p-3 text-left dark:bg-zinc-950"><i class="fa-solid fa-graduation-cap text-violet-500"></i><p class="mt-2 text-xs font-black">Education</p></button>
+            <button onclick="openProfileUpdateModal('Account Information Update')" class="rounded-xl bg-slate-50 p-3 text-left dark:bg-zinc-950"><i class="fa-solid fa-key text-emerald-500"></i><p class="mt-2 text-xs font-black">Account</p></button>
+          </div>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-3">
+          <button onclick="openPage('documents')" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-950/30"><i class="fa-solid fa-folder-open"></i></div><p class="mt-3 text-sm font-black">My Documents</p><p class="mt-1 text-[10px] text-slate-400">Verification records</p></button>
+          <button onclick="openProfileUpdateModal('Profile Correction')" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/30"><i class="fa-solid fa-pen-to-square"></i></div><p class="mt-3 text-sm font-black">Correction Request</p><p class="mt-1 text-[10px] text-slate-400">Correct official record</p></button>
+          <button onclick="openPage('requests')" class="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><div class="grid h-10 w-10 place-items-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/30"><i class="fa-solid fa-clock-rotate-left"></i></div><p class="mt-3 text-sm font-black">Request History</p><p class="mt-1 text-[10px] text-slate-400">Track Admin decisions</p></button>
+        </div>
+      </section>
+
+      <section id="page-attendance" class="page hidden space-y-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-teal-600">Admin / Biometric Controlled</p><h2 class="text-2xl font-black">My Attendance</h2><p class="text-sm text-slate-500">Attendance is view-only. Incorrect entries can be sent to Admin for correction.</p></div><button onclick="openRequestModal('Attendance Correction')" class="rounded-xl bg-amber-500 px-4 py-3 text-xs font-black text-slate-950">Request Correction</button></div>
+        <div id="attendanceSummary" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"></div>
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"><div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-xs uppercase text-slate-400 dark:bg-zinc-950"><tr><th class="p-4">Date</th><th class="p-4">Status</th><th class="p-4">Check In</th><th class="p-4">Check Out</th><th class="p-4">Note</th></tr></thead><tbody id="attendanceBody"></tbody></table></div></div>
+      </section>
+
+      <section id="page-leave" class="page hidden space-y-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-indigo-600">Staff → Admin</p><h2 class="text-2xl font-black">Leave Requests</h2><p class="text-sm text-slate-500">Submit and track leave approvals without editing official attendance.</p></div><button onclick="openLeaveModal()" class="rounded-xl bg-indigo-600 px-4 py-3 text-xs font-black text-white">New Leave Request</button></div>
+        <div id="leaveList" class="space-y-3"></div>
+      </section>
+
+      <section id="page-salary" class="page hidden space-y-5">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"><p class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Admin Controlled Payroll</p><h2 class="mt-1 text-2xl font-black">My Salary / Payroll</h2><p class="mt-2 text-sm text-slate-500">View monthly salary records and print payslips. Salary structures cannot be edited from Staff Portal.</p></div>
+        <div id="salaryCurrent"></div>
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"><div class="border-b border-slate-100 p-5 dark:border-zinc-800"><h3 class="font-black">Payroll History</h3></div><div id="salaryHistory" class="divide-y divide-slate-100 dark:divide-zinc-800"></div></div>
+      </section>
+
+      <section id="page-requests" class="page hidden space-y-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-violet-600">Shared Request IDs</p><h2 class="text-2xl font-black">My Requests</h2><p class="text-sm text-slate-500">Attendance, payroll, portal access, profile and other administrative requests.</p></div><button onclick="openRequestModal('General Request')" class="rounded-xl bg-violet-600 px-4 py-3 text-xs font-black text-white">New Request</button></div>
+        <div id="requestList" class="space-y-3"></div>
+      </section>
+
+      <section id="page-messages" class="page hidden space-y-5">
+        <div><p class="text-[10px] font-black uppercase tracking-wider text-cyan-600">Communication Center</p><h2 class="text-2xl font-black">School Administration</h2><p class="text-sm text-slate-500">Direct staff ↔ admin communication channel.</p></div>
+        <div class="rounded-3xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"><div id="messageThread" class="h-[420px] overflow-y-auto p-5"></div><form onsubmit="sendMessage(event)" class="flex gap-2 border-t border-slate-100 p-4 dark:border-zinc-800"><input id="messageInput" required placeholder="Write a message to School Admin..." class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none dark:border-zinc-700 dark:bg-zinc-950"><button class="rounded-xl bg-cyan-600 px-5 text-white"><i class="fa-solid fa-paper-plane"></i></button></form></div>
+      </section>
+
+      <section id="page-documents" class="page hidden space-y-5">
+        <div><p class="text-[10px] font-black uppercase tracking-wider text-orange-600">Employment Documents</p><h2 class="text-2xl font-black">My Documents</h2><p class="text-sm text-slate-500">View document verification status and submit document-related requests.</p></div>
+        <div id="documentsGrid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"></div>
+      </section>
+
+      <section id="page-notifications" class="page hidden space-y-5">
+        <div class="flex items-end justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-rose-600">Updates</p><h2 class="text-2xl font-black">Notifications</h2></div><button onclick="markNotificationsRead()" class="text-xs font-black text-teal-600">Mark all read</button></div>
+        <div id="notificationList" class="space-y-3"></div>
+      </section>
+
+      <section id="page-settings" class="page hidden space-y-5">
+        <div><p class="text-[10px] font-black uppercase tracking-wider text-slate-500">Account</p><h2 class="text-2xl font-black">Settings</h2></div>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="rounded-3xl border border-slate-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><h3 class="font-black">Appearance</h3><p class="mt-1 text-xs text-slate-400">Light or dark interface.</p><button onclick="toggleTheme()" class="mt-4 rounded-xl border border-slate-200 px-4 py-3 text-xs font-black dark:border-zinc-700">Toggle Theme</button></div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><h3 class="font-black">Portal Access</h3><p class="mt-1 text-xs text-slate-400">Access changes require School Admin approval.</p><button onclick="openRequestModal('Portal Access Request')" class="mt-4 rounded-xl border border-slate-200 px-4 py-3 text-xs font-black dark:border-zinc-700">Request Access Change</button></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="profileUpdateModal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/60 p-3">
+ <form onsubmit="submitProfileUpdate(event)" class="w-full max-w-xl rounded-3xl bg-white p-5 shadow-2xl dark:bg-zinc-900">
+  <div class="flex items-start justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-indigo-500">Profile Update Request</p><h3 id="profileUpdateTitle" class="text-xl font-black">Update Information</h3></div><button type="button" onclick="closeModal('profileUpdateModal')" class="grid h-10 w-10 place-items-center rounded-xl border dark:border-zinc-700"><i class="fa-solid fa-xmark"></i></button></div>
+  <input id="profileUpdateType" type="hidden">
+  <label class="mt-5 block text-xs font-black">Field / Information to update<input id="profileUpdateField" required placeholder="e.g. Phone number, Degree, Email" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-950"></label>
+  <label class="mt-4 block text-xs font-black">Current information<input id="profileUpdateCurrent" placeholder="Current value" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-950"></label>
+  <label class="mt-4 block text-xs font-black">New information<input id="profileUpdateNew" required placeholder="New / corrected value" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-950"></label>
+  <label class="mt-4 block text-xs font-black">Reason / Note<textarea id="profileUpdateReason" rows="3" placeholder="Why is this update needed?" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-950"></textarea></label>
+  <div class="mt-5 flex justify-end gap-2"><button type="button" onclick="closeModal('profileUpdateModal')" class="rounded-xl border px-4 py-3 text-xs font-black dark:border-zinc-700">Cancel</button><button class="rounded-xl bg-indigo-600 px-5 py-3 text-xs font-black text-white">Send to Admin</button></div>
+ </form>
+</div>
+
+<div id="requestModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 p-3">
+ <form onsubmit="submitRequest(event)" class="w-full max-w-xl rounded-3xl bg-white p-5 shadow-2xl dark:bg-zinc-900">
+  <div class="flex items-start justify-between"><div><p class="text-[10px] font-black uppercase tracking-wider text-violet-600">Admin Request</p><h3 id="requestModalTitle" class="text-xl font-black">New Request</h3></div><button type="button" onclick="closeModal('requestModal')" class="h-10 w-10 rounded-xl border dark:border-zinc-700"><i class="fa-solid fa-xmark"></i></button></div>
+  <input id="requestType" type="hidden">
+  <label class="mt-5 block text-xs font-black">Subject<input id="requestSubject" required class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-950"></label>
+  <label class="mt-4 block text-xs font-black">Details<textarea id="requestDetails" required rows="5" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-950"></textarea></label>
+  <div class="mt-5 flex justify-end gap-2"><button type="button" onclick="closeModal('requestModal')" class="rounded-xl border px-4 py-3 text-xs font-black dark:border-zinc-700">Cancel</button><button class="rounded-xl bg-violet-600 px-5 py-3 text-xs font-black text-white">Submit to Admin</button></div>
+ </form>
+</div>
+
+<div id="leaveModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 p-3">
+ <form onsubmit="submitLeave(event)" class="w-full max-w-xl rounded-3xl bg-white p-5 shadow-2xl dark:bg-zinc-900">
+  <div class="flex justify-between"><h3 class="text-xl font-black">New Leave Request</h3><button type="button" onclick="closeModal('leaveModal')"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="mt-5 grid gap-4 sm:grid-cols-2"><label class="text-xs font-black">From<input id="leaveFrom" required type="date" class="mt-2 w-full rounded-xl border p-3 dark:border-zinc-700 dark:bg-zinc-950"></label><label class="text-xs font-black">To<input id="leaveTo" required type="date" class="mt-2 w-full rounded-xl border p-3 dark:border-zinc-700 dark:bg-zinc-950"></label></div>
+  <label class="mt-4 block text-xs font-black">Reason<textarea id="leaveReason" required rows="4" class="mt-2 w-full rounded-xl border p-3 dark:border-zinc-700 dark:bg-zinc-950"></textarea></label>
+  <button class="mt-5 w-full rounded-xl bg-indigo-600 px-5 py-3 text-xs font-black text-white">Submit Leave Request</button>
+ </form>
+</div>
+
+<div id="toast" class="fixed bottom-5 right-5 z-[200] hidden rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white shadow-xl"></div>
+
+<script>
+const KEYS={
+ staff:'junicore-school-staff-main-campus-2026-27-v43',
+ attendance:'junicore-school-attendance-main-campus-2026-27-v47',
+ payroll:'juniCoreSchoolStaffPayrollV113',
+ structure:'juniCoreSchoolStaffSalaryStructureV113',
+ requests:'juniCoreSchoolAdminV87Requests',
+ chat:'juniCoreSchoolAdminV95DirectChat',
+ notifications:'juniCoreSchoolAdminV87Notifications',
+ access:'juniCoreSchoolStaffPortalAccessV108',
+ portal:'juniCoreSchoolStaffPortalV1'
+};
+const ACTIVE_ID='STF-001';
+const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??f}catch(e){return f}};
+const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'PKR '+Number(n||0).toLocaleString('en-PK');
+const now=()=>new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const monthKey=()=>new Date().toISOString().slice(0,7);
+const portal=read(KEYS.portal,{leaves:[],documents:[
+ {id:'DOC-STF-001',title:'CNIC / Identity Document',file:'imran-cnic.pdf',status:'Verified',updated:'12 Sep 2026'},
+ {id:'DOC-STF-002',title:'Appointment Letter',file:'appointment-letter.pdf',status:'Verified',updated:'01 Aug 2025'},
+ {id:'DOC-STF-003',title:'Qualification Record',file:'qualification.pdf',status:'Pending Verification',updated:'17 Sep 2026'}
+],messages:[
+ {id:'MSG-STF-001',from:'admin',text:'Staff Portal official communication channel is active.',time:'17 Sep 2026 · 09:10'}
+]});
+function savePortal(){write(KEYS.portal,portal)}
+function staffRows(){return read(KEYS.staff,[])}
+function staff(){return staffRows().find(x=>x.id===ACTIVE_ID)||staffRows()[0]||{id:ACTIVE_ID,name:'Mr. Imran Shah',role:'Office Staff',department:'Administration',phone:'+92 300 555 0188',email:'imran.shah@school.edu',joiningDate:'2025-08-01',status:'Active',salary:45000}}
+function attendanceRows(){
+ const store=read(KEYS.attendance,{staff:{}});
+ const rows=Object.entries(store.staff||{}).map(([date,map])=>map?.[staff().id]?{date,...map[staff().id]}:null).filter(Boolean).sort((a,b)=>b.date.localeCompare(a.date));
+ if(rows.length)return rows;
+ return [
+  {date:'2026-09-24',status:'Present',checkIn:'08:01',checkOut:'16:04',note:''},
+  {date:'2026-09-23',status:'Present',checkIn:'08:05',checkOut:'16:02',note:''},
+  {date:'2026-09-22',status:'Late',checkIn:'08:27',checkOut:'16:10',note:'Late arrival'},
+  {date:'2026-09-21',status:'Present',checkIn:'07:58',checkOut:'16:00',note:''},
+  {date:'2026-09-20',status:'Leave',checkIn:'',checkOut:'',note:'Approved leave'}
+ ];
+}
+function payrollRows(){
+ const all=read(KEYS.payroll,[]);
+ return all.filter(x=>(x.staffId||x.employeeId||x.personId)===staff().id).sort((a,b)=>String(b.month||b.period||'').localeCompare(String(a.month||a.period||'')));
+}
+function demoPayroll(){
+ return [{id:'PAY-STF-SEP26',staffId:staff().id,month:'2026-09',basic:Number(staff().salary||45000),house:5000,transport:3000,medical:2000,otherAllowance:0,providentFund:1500,tax:0,otherDeduction:0,net:Number(staff().salary||45000)+8500,status:'Paid',paymentDate:'2026-09-05',reference:'BANK-STF-0905'}];
+}
+function myPayroll(){const x=payrollRows();return x.length?x:demoPayroll()}
+function requestRows(){return read(KEYS.requests,[]).filter(r=>r.source==='Staff'&&(r.person===staff().name||r.personId===staff().id||r.staffId===staff().id||String(r.id||'').startsWith('REQ-STF')))}
+function notificationRows(){return read(KEYS.notifications,[]).filter(n=>n.audience==='Staff'||n.recipient===staff().name||String(n.id||'').includes('STF'))}
+function statusBadge(s){const c=['Paid','Approved','Resolved','Present','Verified','Active'].includes(s)?'bg-emerald-100 text-emerald-700':['Rejected','Absent'].includes(s)?'bg-rose-100 text-rose-700':['Late','Pending','Pending Verification'].includes(s)?'bg-amber-100 text-amber-700':'bg-blue-100 text-blue-700';return `<span class="rounded-full px-2.5 py-1 text-[10px] font-black ${c}">${esc(s||'Pending')}</span>`}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');clearTimeout(window.__t);window.__t=setTimeout(()=>e.classList.add('hidden'),2200)}
+function openPage(k){
+ document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById('page-'+k)?.classList.remove('hidden');
+ document.querySelectorAll('.nav').forEach(x=>{const a=x.dataset.page===k;x.classList.toggle('bg-indigo-50',a);x.classList.toggle('text-indigo-700',a);x.classList.toggle('dark:bg-indigo-950/30',a);x.classList.toggle('dark:text-indigo-300',a)});
+ const names={dashboard:'Dashboard',profile:'My Profile',attendance:'My Attendance',leave:'Leave Requests',salary:'My Salary / Payroll',requests:'My Requests',messages:'Messages',documents:'Documents',notifications:'Notifications',settings:'Settings'};
+ document.getElementById('pageTitle').textContent=names[k]||'Staff Portal';renderAll();if(innerWidth<1024)closeSidebar();
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('-translate-x-full');document.getElementById('overlay').classList.toggle('hidden')}
+function closeSidebar(){document.getElementById('sidebar').classList.add('-translate-x-full');document.getElementById('overlay').classList.add('hidden')}
+function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('juniCoreStaffTheme',d?'dark':'light');syncTheme()}
+function syncTheme(){document.getElementById('themeIcon').className=document.documentElement.classList.contains('dark')?'fa-solid fa-sun':'fa-solid fa-moon'}
+function renderProfile(){
+ const s=staff(), extra=read('juniCoreSchoolStaffProfileV5:'+String(s.id||ACTIVE_ID),{photo:'',education:{qualification:s.qualification||'Bachelor / Graduate',institute:s.institute||'Not added',specialization:s.specialization||'General',year:s.passingYear||'—'},account:{username:s.email||s.id||'—',portalRole:'School Staff',access:'Active',lastLogin:'Current session'}});
+ document.getElementById('sideName').textContent=s.name;document.getElementById('sideRole').textContent=`${s.role||'Staff'} · ${s.department||'Administration'}`;
+ document.getElementById('welcomeName').textContent=(s.name||'Staff').replace(/^Mr\.?\s*/,'');document.getElementById('dashDept').textContent=s.department||'Administration';document.getElementById('dashStatus').textContent=s.status||'Active';
+ const hn=document.getElementById('profileHeroName');if(hn)hn.textContent=s.name||'Staff Member';const hr=document.getElementById('profileHeroRole');if(hr)hr.textContent=`${s.role||'Staff'} · ${s.department||'Administration'}`;const hi=document.getElementById('profileHeroId');if(hi)hi.textContent=s.id||'—';const hs=document.getElementById('profileHeroStatus');if(hs)hs.textContent=s.status||'Active';
+ const photo=document.getElementById('profilePhoto');if(photo){photo.src=extra.photo||`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="100%" height="100%" fill="#4338ca"/><text x="50%" y="56%" text-anchor="middle" font-family="Arial" font-size="48" font-weight="700" fill="white">IS</text></svg>`)}`;}
+ const personal=[['Full Name',s.name,'fa-user'],['Phone',s.phone||'Not provided','fa-phone'],['Email',s.email||'Not provided','fa-envelope'],['Staff ID',s.id||'—','fa-id-badge'],['Gender',s.gender||'Not added','fa-venus-mars'],['Date of Birth',s.dob||s.dateOfBirth||'Not added','fa-cake-candles'],['CNIC / ID',s.cnic||s.nationalId||'Not added','fa-address-card'],['Address',s.address||'Not added','fa-location-dot']];
+ const pg=document.getElementById('profilePersonalGrid');if(pg)pg.innerHTML=personal.map(x=>`<div class="rounded-2xl bg-slate-50 p-4 dark:bg-zinc-950"><div class="flex gap-3"><div class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-indigo-600 shadow-sm dark:bg-zinc-900"><i class="fa-solid ${x[2]} text-xs"></i></div><div class="min-w-0"><p class="text-[9px] font-black uppercase tracking-wider text-slate-400">${esc(x[0])}</p><p class="mt-1 break-words text-sm font-black">${esc(x[1])}</p></div></div></div>`).join('');
+ const work=[['Role',s.role||'Staff'],['Department',s.department||'Administration'],['Joining Date',s.joiningDate||'—'],['Employment Type',s.employmentType||'Full Time'],['Shift',s.shift||'Day Shift'],['Employment Status',s.status||'Active']];
+ const wg=document.getElementById('profileWorkGrid');if(wg)wg.innerHTML=work.map(x=>`<div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 dark:bg-zinc-950"><p class="text-[10px] font-bold text-slate-400">${esc(x[0])}</p><p class="text-right text-xs font-black">${esc(x[1])}</p></div>`).join('');
+ const edu=[['Highest Qualification',extra.education.qualification],['Institute / University',extra.education.institute],['Specialization',extra.education.specialization],['Passing Year',extra.education.year]];
+ const eg=document.getElementById('profileEducationGrid');if(eg)eg.innerHTML=edu.map(x=>`<div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 dark:bg-zinc-950"><p class="text-[10px] font-bold text-slate-400">${esc(x[0])}</p><p class="text-right text-xs font-black">${esc(x[1])}</p></div>`).join('');
+ const acc=[['Username',extra.account.username],['Portal Role',extra.account.portalRole],['Account Access',extra.account.access],['Last Login',extra.account.lastLogin]];
+ const ag=document.getElementById('profileAccountGrid');if(ag)ag.innerHTML=acc.map(x=>`<div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3 dark:bg-zinc-950"><p class="text-[10px] font-bold text-slate-400">${esc(x[0])}</p><p class="max-w-[60%] break-words text-right text-xs font-black">${esc(x[1])}</p></div>`).join('');
+}
+function updateProfilePhoto(e){
+ const f=e.target.files&&e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){toast('Please choose an image file.');return}if(f.size>1024*1024){toast('Profile image must be under 1MB.');return}
+ const r=new FileReader();r.onload=()=>{const s=staff(),k='juniCoreSchoolStaffProfileV5:'+String(s.id||ACTIVE_ID),x=read(k,{education:{qualification:s.qualification||'Bachelor / Graduate',institute:s.institute||'Not added',specialization:s.specialization||'General',year:s.passingYear||'—'},account:{username:s.email||s.id||'—',portalRole:'School Staff',access:'Active',lastLogin:'Current session'}});x.photo=r.result;write(k,x);renderProfile();toast('Profile photo updated on this portal.');};r.readAsDataURL(f);
+}
+function openProfileUpdateModal(type){
+ document.getElementById('profileUpdateType').value=type;document.getElementById('profileUpdateTitle').textContent=type;document.getElementById('profileUpdateField').value='';document.getElementById('profileUpdateCurrent').value='';document.getElementById('profileUpdateNew').value='';document.getElementById('profileUpdateReason').value='';showModal('profileUpdateModal');
+}
+function submitProfileUpdate(e){
+ e.preventDefault();const type=document.getElementById('profileUpdateType').value,field=document.getElementById('profileUpdateField').value.trim(),cur=document.getElementById('profileUpdateCurrent').value.trim(),nv=document.getElementById('profileUpdateNew').value.trim(),reason=document.getElementById('profileUpdateReason').value.trim(),rows=read(KEYS.requests,[]);
+ rows.unshift({id:'REQ-STF-PRO-'+Date.now(),source:'Staff',type,person:staff().name,personId:staff().id,scope:`${staff().role||'Staff'} · ${staff().department||'Administration'}`,subject:`${field} update`,detail:`Current: ${cur||'—'} | Requested: ${nv}${reason?' | Reason: '+reason:''}`,status:'Pending',submittedAt:now()});write(KEYS.requests,rows);closeModal('profileUpdateModal');renderAll();toast('Profile update request sent to School Admin.');
+}
+function renderAttendance(){
+ const rows=attendanceRows(),count=s=>rows.filter(x=>x.status===s).length;
+ document.getElementById('attendanceSummary').innerHTML=[['Present',count('Present')],['Absent',count('Absent')],['Late',count('Late')],['Leave',count('Leave')]].map(([a,b])=>`<div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"><p class="text-xs font-bold text-slate-400">${a}</p><p class="mt-2 text-2xl font-black">${b}</p></div>`).join('');
+ document.getElementById('attendanceBody').innerHTML=rows.map(r=>`<tr class="border-t border-slate-100 dark:border-zinc-800"><td class="p-4 font-bold">${esc(r.date)}</td><td class="p-4">${statusBadge(r.status)}</td><td class="p-4">${esc(r.checkIn||'—')}</td><td class="p-4">${esc(r.checkOut||'—')}</td><td class="p-4 text-xs text-slate-400">${esc(r.note||'—')}</td></tr>`).join('');
+ document.getElementById('dashAttendance').innerHTML=rows.slice(0,4).map(r=>`<div class="flex items-center justify-between rounded-xl bg-slate-50 p-3 dark:bg-zinc-950"><div><p class="text-xs font-black">${esc(r.date)}</p><p class="text-[10px] text-slate-400">${esc(r.checkIn||'—')} → ${esc(r.checkOut||'—')}</p></div>${statusBadge(r.status)}</div>`).join('');
+}
+function renderSalary(){
+ const rows=myPayroll(),cur=rows[0],basic=Number(cur.basic||cur.basicSalary||staff().salary||0),allow=Number(cur.allowance||0)+Number(cur.house||0)+Number(cur.transport||0)+Number(cur.medical||0)+Number(cur.otherAllowance||0),ded=Number(cur.deduction||0)+Number(cur.providentFund||0)+Number(cur.tax||0)+Number(cur.otherDeduction||0),net=Number(cur.net||cur.netSalary||basic+allow-ded);
+ document.getElementById('salaryCurrent').innerHTML=`<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">${[['Basic Salary',money(basic)],['Allowances',money(allow)],['Deductions',money(ded)],['Net Salary',money(net)]].map(x=>`<div class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"><p class="text-xs font-bold text-slate-400">${x[0]}</p><p class="mt-2 text-xl font-black">${x[1]}</p></div>`).join('')}</div>`;
+ document.getElementById('salaryHistory').innerHTML=rows.map(r=>`<div class="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"><div><p class="font-black">${esc(r.month||r.period||'Monthly Payroll')}</p><p class="mt-1 text-xs text-slate-400">${esc(r.paymentDate||'Payment date pending')} · ${esc(r.reference||r.paymentReference||'No reference')}</p></div><div class="flex items-center gap-3">${statusBadge(r.status||'Pending')}<button onclick="printPayslip('${esc(r.id||'')}')" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black dark:border-zinc-700"><i class="fa-solid fa-print mr-1"></i>Payslip</button></div></div>`).join('');
+}
+function renderRequests(){
+ const rows=requestRows().concat(portal.leaves.map(x=>({...x,type:'Leave Approval',source:'Staff'}))).sort((a,b)=>String(b.submittedAt||b.submitted||'').localeCompare(String(a.submittedAt||a.submitted||'')));
+ document.getElementById('requestList').innerHTML=rows.length?rows.map(r=>`<article class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex flex-wrap items-center gap-2">${statusBadge(r.status||'Pending')}<span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-500 dark:bg-zinc-800">${esc(r.type||'Request')}</span><span class="text-[10px] font-black text-violet-600">${esc(r.id)}</span></div><h3 class="mt-3 font-black">${esc(r.subject||r.title||r.type||'Request')}</h3><p class="mt-1 text-xs text-slate-500">${esc(r.detail||r.details||r.reason||'')}</p><p class="mt-2 text-[10px] text-slate-400">${esc(r.submittedAt||r.submitted||'')}</p></article>`).join(''):`<div class="rounded-2xl border border-dashed p-8 text-center text-sm text-slate-400">No staff requests yet.</div>`;
+ document.getElementById('dashRequests').innerHTML=rows.slice(0,4).map(r=>`<div class="rounded-xl bg-slate-50 p-3 dark:bg-zinc-950"><div class="flex justify-between gap-2"><p class="text-xs font-black">${esc(r.type||'Request')}</p>${statusBadge(r.status||'Pending')}</div><p class="mt-1 text-[10px] text-slate-400">${esc(r.id)}</p></div>`).join('')||'<p class="text-sm text-slate-400">No requests.</p>';
+ document.getElementById('requestBadge').textContent=rows.filter(r=>['Pending','In Review','Returned'].includes(r.status||'Pending')).length;
+}
+function renderLeave(){
+ document.getElementById('leaveList').innerHTML=portal.leaves.length?portal.leaves.map(r=>`<article class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex justify-between gap-3"><div><p class="font-black">${esc(r.from)} → ${esc(r.to)}</p><p class="mt-1 text-xs text-slate-500">${esc(r.reason)}</p><p class="mt-2 text-[10px] text-slate-400">${esc(r.id)} · ${esc(r.submittedAt)}</p></div>${statusBadge(r.status)}</div></article>`).join(''):'<div class="rounded-2xl border border-dashed p-8 text-center text-sm text-slate-400">No leave requests submitted from this portal yet.</div>';
+}
+function renderMessages(){document.getElementById('messageThread').innerHTML=portal.messages.map(m=>`<div class="mb-3 flex ${m.from==='staff'?'justify-end':'justify-start'}"><div class="max-w-[82%] rounded-2xl ${m.from==='staff'?'bg-cyan-600 text-white':'bg-slate-100 dark:bg-zinc-800'} px-4 py-3"><p class="text-sm">${esc(m.text)}</p><p class="mt-1 text-[9px] opacity-60">${esc(m.time)}</p></div></div>`).join('')}
+function renderDocuments(){document.getElementById('documentsGrid').innerHTML=portal.documents.map(d=>`<div class="rounded-2xl border border-slate-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-start justify-between"><i class="fa-solid fa-file-lines text-2xl text-orange-500"></i>${statusBadge(d.status)}</div><h3 class="mt-4 font-black">${esc(d.title)}</h3><p class="mt-1 text-xs text-slate-400">${esc(d.file)}</p><p class="mt-3 text-[10px] text-slate-400">Updated ${esc(d.updated)}</p></div>`).join('')}
+function renderNotifications(){
+ let rows=notificationRows();if(!rows.length)rows=[{id:'NTF-STF-DEMO-1',title:'Staff Portal ready',delivery:'Delivered',read:'Unread',sentAt:'24 Sep 2026 · 10:00',context:'Portal Access'}];
+ document.getElementById('notificationList').innerHTML=rows.map(n=>`<article class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-start gap-3"><div class="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-rose-600"><i class="fa-solid fa-bell"></i></div><div><h3 class="font-black">${esc(n.title||n.message||'Notification')}</h3><p class="mt-1 text-xs text-slate-400">${esc(n.context||n.channel||'School Administration')} · ${esc(n.sentAt||n.time||'')}</p></div></div></article>`).join('');
+ const unread=rows.filter(n=>n.read==='Unread'||n.read===false).length;document.getElementById('notificationBadge').textContent=unread;document.getElementById('topNotificationDot').classList.toggle('hidden',!unread);
+}
+function renderDashboard(){
+ const a=attendanceRows(),p=myPayroll()[0],req=requestRows(),open=req.filter(x=>['Pending','In Review'].includes(x.status)).length;
+ const present=a.filter(x=>x.status==='Present').length, late=a.filter(x=>x.status==='Late').length;
+ const cards=[
+  ['Attendance',`${present} Present`,'fa-calendar-check','text-teal-600',`${late} late · ${a.length} records`],
+  ['Open Requests',open,'fa-inbox','text-violet-600','Awaiting / under review'],
+  ['Payroll',p?.status||'Pending','fa-money-check-dollar','text-emerald-600',p?.month||p?.period||'Current month'],
+  ['Documents',portal.documents.length,'fa-folder-open','text-orange-600',`${portal.documents.filter(x=>x.status==='Verified').length} verified`]
+ ];
+ document.getElementById('summaryCards').innerHTML=cards.map(c=>`<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><div class="flex items-start justify-between"><div class="grid h-10 w-10 place-items-center rounded-xl bg-slate-50 dark:bg-zinc-950"><i class="fa-solid ${c[2]} ${c[3]}"></i></div><i class="fa-solid fa-arrow-trend-up text-xs text-slate-300"></i></div><p class="mt-4 text-xs font-bold text-slate-400">${c[0]}</p><p class="mt-1 text-xl font-black">${esc(c[1])}</p><p class="mt-1 text-[10px] text-slate-400">${esc(c[4])}</p></div>`).join('');
+ const today=new Date(), iso=today.toISOString().slice(0,10),todayRow=a.find(x=>x.date===iso)||a[0];
+ const d=document.getElementById('dashTodayDate');if(d)d.textContent=today.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+ const ds=document.getElementById('dashTodayStatus');if(ds)ds.textContent=todayRow?.status||'No record';
+ const ci=document.getElementById('dashTodayCheckin');if(ci)ci.textContent=todayRow?.checkIn||'—';
+ const basic=Number(p?.basic||p?.basicSalary||staff().salary||0),allow=Number(p?.allowance||0)+Number(p?.house||0)+Number(p?.transport||0)+Number(p?.medical||0)+Number(p?.otherAllowance||0),ded=Number(p?.deduction||0)+Number(p?.providentFund||0)+Number(p?.tax||0)+Number(p?.otherDeduction||0),net=Number(p?.net||p?.netSalary||basic+allow-ded);
+ const dp=document.getElementById('dashPayroll');if(dp)dp.innerHTML=`<div class="rounded-2xl bg-emerald-50/70 p-4 dark:bg-emerald-950/20"><div class="flex items-center justify-between"><div><p class="text-[10px] font-black uppercase text-emerald-600">${esc(p?.month||p?.period||'Current Month')}</p><p class="mt-1 text-2xl font-black">${money(net)}</p></div>${statusBadge(p?.status||'Pending')}</div><div class="mt-4 grid grid-cols-2 gap-2 text-[10px]"><div class="rounded-xl bg-white/70 p-3 dark:bg-zinc-900"><p class="text-slate-400">Basic</p><p class="mt-1 font-black">${money(basic)}</p></div><div class="rounded-xl bg-white/70 p-3 dark:bg-zinc-900"><p class="text-slate-400">Deductions</p><p class="mt-1 font-black">${money(ded)}</p></div></div></div>`;
+ let notes=notificationRows();if(!notes.length)notes=[{title:'Staff Portal ready',context:'Portal Access',sentAt:'24 Sep 2026'}];
+ const dn=document.getElementById('dashNotifications');if(dn)dn.innerHTML=notes.slice(0,4).map(n=>`<div class="flex items-start gap-3 rounded-xl bg-slate-50 p-3 dark:bg-zinc-950"><div class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-950/30"><i class="fa-solid fa-bell text-xs"></i></div><div class="min-w-0"><p class="truncate text-xs font-black">${esc(n.title||n.message||'Notification')}</p><p class="mt-1 truncate text-[9px] text-slate-400">${esc(n.context||n.channel||'School Admin')} · ${esc(n.sentAt||n.time||'')}</p></div></div>`).join('');
+}
+function renderAll(){renderProfile();renderAttendance();renderSalary();renderRequests();renderLeave();renderMessages();renderDocuments();renderNotifications();renderDashboard()}
+function openRequestModal(type){document.getElementById('requestType').value=type;document.getElementById('requestModalTitle').textContent=type;document.getElementById('requestSubject').value='';document.getElementById('requestDetails').value='';showModal('requestModal')}
+function showModal(id){const m=document.getElementById(id);m.classList.remove('hidden');m.classList.add('flex')}
+function closeModal(id){const m=document.getElementById(id);m.classList.add('hidden');m.classList.remove('flex')}
+function submitRequest(e){
+ e.preventDefault();const rows=read(KEYS.requests,[]),type=document.getElementById('requestType').value,subject=document.getElementById('requestSubject').value.trim(),detail=document.getElementById('requestDetails').value.trim();
+ const r={id:'REQ-STF-'+Date.now(),source:'Staff',type,person:staff().name,personId:staff().id,scope:`${staff().role||'Staff'} · ${staff().department||'Administration'}`,subject,detail,status:'Pending',submittedAt:now()};
+ rows.unshift(r);write(KEYS.requests,rows);closeModal('requestModal');renderAll();toast('Request submitted to School Admin.');
+}
+function openLeaveModal(){document.getElementById('leaveFrom').value='';document.getElementById('leaveTo').value='';document.getElementById('leaveReason').value='';showModal('leaveModal')}
+function submitLeave(e){
+ e.preventDefault();const r={id:'REQ-STF-LEAVE-'+Date.now(),from:leaveFrom.value,to:leaveTo.value,reason:leaveReason.value.trim(),status:'Pending',submittedAt:now()};portal.leaves.unshift(r);savePortal();
+ const rows=read(KEYS.requests,[]);rows.unshift({id:r.id,source:'Staff',type:'Leave Approval',person:staff().name,personId:staff().id,scope:`${staff().role||'Staff'} · ${staff().department||'Administration'}`,subject:`Leave ${r.from} to ${r.to}`,detail:r.reason,status:'Pending',submittedAt:r.submittedAt});write(KEYS.requests,rows);
+ closeModal('leaveModal');renderAll();toast('Leave request sent to Admin.');
+}
+function sendMessage(e){
+ e.preventDefault();const text=document.getElementById('messageInput').value.trim();if(!text)return;portal.messages.push({id:'MSG-'+Date.now(),from:'staff',text,time:now()});savePortal();
+ const chat=read(KEYS.chat,{contacts:[],threads:{}});chat.contacts=Array.isArray(chat.contacts)?chat.contacts:[];chat.threads=chat.threads||{};let c=chat.contacts.find(x=>x.id===staff().id);if(!c){c={id:staff().id,name:staff().name,role:'Staff',subtitle:`${staff().role||'Staff'} · ${staff().department||''}`};chat.contacts.push(c)};chat.threads[staff().id]=Array.isArray(chat.threads[staff().id])?chat.threads[staff().id]:[];chat.threads[staff().id].push({id:'MSG-'+Date.now(),from:'Staff',text,time:now(),status:'Sent'});write(KEYS.chat,chat);
+ document.getElementById('messageInput').value='';renderMessages();toast('Message sent to School Admin.');
+}
+function markNotificationsRead(){const rows=read(KEYS.notifications,[]);rows.forEach(n=>{if(n.audience==='Staff'||n.recipient===staff().name){n.read='Read'}});write(KEYS.notifications,rows);renderNotifications();toast('Notifications marked read.')}
+function printPayslip(id){
+ const r=myPayroll().find(x=>String(x.id||'')===String(id))||myPayroll()[0];const basic=Number(r.basic||r.basicSalary||staff().salary||0),allow=Number(r.allowance||0)+Number(r.house||0)+Number(r.transport||0)+Number(r.medical||0)+Number(r.otherAllowance||0),ded=Number(r.deduction||0)+Number(r.providentFund||0)+Number(r.tax||0)+Number(r.otherDeduction||0),net=Number(r.net||r.netSalary||basic+allow-ded);
+ const w=window.open('','_blank');if(!w){toast('Allow popups to print payslip.');return}w.document.write(`<html><head><title>Payslip</title><style>body{font-family:Arial;padding:40px;color:#111}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ddd;padding:10px;text-align:left}.h{display:flex;justify-content:space-between}</style></head><body><div class="h"><div><h1>JuniCore School</h1><b>Staff Payslip</b></div><div>${esc(r.month||'Monthly Payroll')}</div></div><hr><p><b>${esc(staff().name)}</b><br>${esc(staff().id)} · ${esc(staff().role)} · ${esc(staff().department)}</p><table><tr><th>Basic</th><td>${money(basic)}</td></tr><tr><th>Allowances</th><td>${money(allow)}</td></tr><tr><th>Deductions</th><td>${money(ded)}</td></tr><tr><th>Net Salary</th><td><b>${money(net)}</b></td></tr><tr><th>Status</th><td>${esc(r.status||'Pending')}</td></tr><tr><th>Payment Date</th><td>${esc(r.paymentDate||'—')}</td></tr><tr><th>Reference</th><td>${esc(r.reference||r.paymentReference||'—')}</td></tr></table><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close();
+}
+if(localStorage.getItem('juniCoreStaffTheme')==='dark')document.documentElement.classList.add('dark');
+document.addEventListener('DOMContentLoaded',()=>{syncTheme();renderAll();openPage('dashboard')});
+</script>
+</body>
+</html>
